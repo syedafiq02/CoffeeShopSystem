@@ -1,0 +1,6 @@
+# Prevent directory listing across the whole project
+Options -Indexes
+
+# Friendly error pages (update the path below if the project folder is ever renamed)
+ErrorDocument 404 /coffee-shop-system/404.php
+ErrorDocument 500 /coffee-shop-system/500.php

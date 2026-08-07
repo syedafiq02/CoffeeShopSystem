@@ -1,0 +1,6 @@
+# Claude Code session-local settings (not part of the project)
+.claude/
+
+# OS junk files
+.DS_Store
+Thumbs.db
