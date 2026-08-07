@@ -77,6 +77,20 @@ CREATE TABLE cart (
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------
+-- promo_codes (admin-managed discount codes)
+-- ---------------------------------------------------
+CREATE TABLE promo_codes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    discount_type ENUM('percentage', 'fixed') NOT NULL,
+    discount_value DECIMAL(10,2) NOT NULL,
+    usage_limit INT DEFAULT NULL,
+    expiry_date DATE DEFAULT NULL,
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------
 -- orders
 -- ---------------------------------------------------
 CREATE TABLE orders (
@@ -89,9 +103,13 @@ CREATE TABLE orders (
     order_type ENUM('pickup', 'delivery') NOT NULL DEFAULT 'pickup',
     delivery_address TEXT DEFAULT NULL,
     delivery_fee DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    promo_code_id INT DEFAULT NULL,
+    discount_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (promo_code_id) REFERENCES promo_codes(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------
@@ -153,6 +171,9 @@ INSERT INTO products (category_id, name, description, price, image, status) VALU
     (2, 'Hot Chocolate', 'Rich chocolate topped with whipped cream.', 4.20, NULL, 'active'),
     (3, 'Butter Croissant', 'Freshly baked flaky croissant.', 3.80, NULL, 'active'),
     (3, 'Blueberry Muffin', 'Soft muffin loaded with blueberries.', 3.50, NULL, 'active');
+
+INSERT INTO promo_codes (code, discount_type, discount_value, usage_limit, expiry_date, status) VALUES
+    ('WELCOME10', 'percentage', 10.00, NULL, NULL, 'active');
 
 INSERT INTO gallery (product_id, type, title, image, description) VALUES
     (NULL, 'shop', 'Our Cozy Interior', 'shop-1.svg', 'Warm seating area at our main outlet.'),

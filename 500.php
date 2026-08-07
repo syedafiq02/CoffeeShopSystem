@@ -13,7 +13,7 @@ require_once __DIR__ . '/includes/header.php';
 <nav class="navbar navbar-light bg-coffee-cream shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="<?= BASE_URL ?>public/index.php">
-            <img src="<?= BASE_URL ?>assets/images/logo.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" height="48">
+            <img src="<?= BASE_URL ?>assets/images/logov3.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" height="48">
         </a>
     </div>
 </nav>

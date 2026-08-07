@@ -30,6 +30,10 @@
            class="list-group-item list-group-item-action <?= $currentPage === 'customers.php' ? 'active' : '' ?>">
             <i class="bi bi-people me-2"></i>Customers
         </a>
+        <a href="<?= BASE_URL ?>admin/promo_codes.php"
+           class="list-group-item list-group-item-action <?= in_array($currentPage, ['promo_codes.php', 'promo_form.php']) ? 'active' : '' ?>">
+            <i class="bi bi-ticket-perforated me-2"></i>Promo Codes
+        </a>
         <a href="<?= BASE_URL ?>admin/reports.php"
            class="list-group-item list-group-item-action <?= $currentPage === 'reports.php' ? 'active' : '' ?>">
             <i class="bi bi-bar-chart me-2"></i>Reports

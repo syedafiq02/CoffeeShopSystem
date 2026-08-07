@@ -2,7 +2,7 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-md-4">
-                    <img src="<?= BASE_URL ?>assets/images/logo.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" height="56" class="mb-3">
+                    <img src="<?= BASE_URL ?>assets/images/logov3.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" height="56" class="mb-3">
                     <p class="footer-tagline mb-0">
                         Crafted coffee, served with warmth. Small-batch roasted and brewed with care, every single day.
                     </p>

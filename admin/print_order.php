@@ -8,8 +8,10 @@ require_admin();
 $orderId = (int) ($_GET['id'] ?? 0);
 
 $stmt = $pdo->prepare(
-    'SELECT o.*, u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone
-     FROM orders o JOIN users u ON u.id = o.user_id
+    'SELECT o.*, u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone, pc.code AS promo_code
+     FROM orders o
+     JOIN users u ON u.id = o.user_id
+     LEFT JOIN promo_codes pc ON pc.id = o.promo_code_id
      WHERE o.id = ?'
 );
 $stmt->execute([$orderId]);
@@ -45,7 +47,7 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="text-center mb-4">
-        <img src="<?= BASE_URL ?>assets/images/logo.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" height="64">
+        <img src="<?= BASE_URL ?>assets/images/logov3.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" height="64">
         <h2 class="section-heading mt-2 mb-0">Order Receipt</h2>
         <p class="text-muted mb-0">Order #<?= (int) $order['id'] ?></p>
         <p class="text-muted small">
@@ -94,6 +96,9 @@ require_once __DIR__ . '/../includes/header.php';
                                 <td class="text-end"><?= CURRENCY_SYMBOL ?> <?= number_format((float) $item['price'], 2) ?></td>
                             </tr>
                         <?php endforeach; ?>
+                        <?php if ((float) $order['discount_amount'] > 0): ?>
+                            <tr><td colspan="2">Discount<?= $order['promo_code'] ? ' (' . htmlspecialchars($order['promo_code']) . ')' : '' ?></td><td class="text-end">-<?= CURRENCY_SYMBOL ?> <?= number_format((float) $order['discount_amount'], 2) ?></td></tr>
+                        <?php endif; ?>
                         <?php if ($order['order_type'] === 'delivery'): ?>
                             <tr><td colspan="2">Delivery Fee</td><td class="text-end"><?= CURRENCY_SYMBOL ?> <?= number_format((float) $order['delivery_fee'], 2) ?></td></tr>
                         <?php endif; ?>

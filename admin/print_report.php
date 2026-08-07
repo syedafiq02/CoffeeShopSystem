@@ -85,7 +85,7 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="text-center mb-4">
-        <img src="<?= BASE_URL ?>assets/images/logo.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" height="64">
+        <img src="<?= BASE_URL ?>assets/images/logov3.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" height="64">
         <h2 class="section-heading mt-2 mb-0"><?= htmlspecialchars($reportTitle) ?></h2>
         <p class="text-muted mb-0"><?= htmlspecialchars($rangeLabel) ?></p>
         <p class="text-muted small">

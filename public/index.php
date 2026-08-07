@@ -96,7 +96,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                 <a href="<?= BASE_URL ?>public/about.php" class="btn btn-coffee">Read Our Story</a>
             </div>
             <div class="col-lg-5 text-center">
-                <img src="<?= BASE_URL ?>assets/images/logo.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" style="max-width: 220px; width: 100%;">
+                <img src="<?= BASE_URL ?>assets/images/logov3.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" style="max-width: 220px; width: 100%;">
             </div>
         </div>
     </div>

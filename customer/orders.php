@@ -8,8 +8,10 @@ require_login();
 $userId = current_user_id();
 
 $stmt = $pdo->prepare(
-    'SELECT id, total_amount, order_status, payment_status, order_type, delivery_address, delivery_fee, created_at
-     FROM orders WHERE user_id = ? ORDER BY created_at DESC'
+    'SELECT o.id, o.total_amount, o.order_status, o.payment_status, o.order_type, o.delivery_address,
+            o.delivery_fee, o.discount_amount, o.created_at, pc.code AS promo_code
+     FROM orders o LEFT JOIN promo_codes pc ON pc.id = o.promo_code_id
+     WHERE o.user_id = ? ORDER BY o.created_at DESC'
 );
 $stmt->execute([$userId]);
 $orders = $stmt->fetchAll();
@@ -103,6 +105,12 @@ require_once __DIR__ . '/../includes/navbar.php';
                                                     <td class="text-end"><?= CURRENCY_SYMBOL ?> <?= number_format((float) $item['price'], 2) ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
+                                            <?php if ((float) $order['discount_amount'] > 0): ?>
+                                                <tr>
+                                                    <td colspan="2">Discount<?= $order['promo_code'] ? ' (' . htmlspecialchars($order['promo_code']) . ')' : '' ?></td>
+                                                    <td class="text-end">-<?= CURRENCY_SYMBOL ?> <?= number_format((float) $order['discount_amount'], 2) ?></td>
+                                                </tr>
+                                            <?php endif; ?>
                                             <?php if ($order['order_type'] === 'delivery'): ?>
                                                 <tr>
                                                     <td colspan="2">Delivery Fee</td>

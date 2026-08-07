@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $orderType = $_POST['order_type'] ?? '';
     $deliveryAddress = sanitize_input($_POST['delivery_address'] ?? '');
     $paymentMethod = $_POST['payment_method'] ?? '';
+    $promoCode = strtoupper(sanitize_input($_POST['promo_code'] ?? ''));
 
     if (!in_array($orderType, ['pickup', 'delivery'], true)) {
         $errors[] = 'Please select a valid order type.';
@@ -56,20 +57,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Your cart is empty.';
     }
 
+    // Server-side authoritative promo code validation — never trust the
+    // client-side preview from ajax/apply_promo.php
+    $appliedPromoId = null;
+    $discountAmount = 0;
+
+    if (empty($errors) && $promoCode !== '') {
+        $subtotal = 0;
+        foreach ($cartItems as $item) {
+            $subtotal += $item['quantity'] * $item['price'];
+        }
+
+        $promoStmt = $pdo->prepare('SELECT * FROM promo_codes WHERE code = ?');
+        $promoStmt->execute([$promoCode]);
+        $promo = $promoStmt->fetch();
+
+        if (!$promo) {
+            $errors[] = 'That promo code does not exist.';
+        } elseif ($promo['status'] !== 'active') {
+            $errors[] = 'That promo code is no longer active.';
+        } elseif ($promo['expiry_date'] !== null && $promo['expiry_date'] < date('Y-m-d')) {
+            $errors[] = 'That promo code has expired.';
+        } else {
+            $usageOk = true;
+            if ($promo['usage_limit'] !== null) {
+                $usedStmt = $pdo->prepare('SELECT COUNT(*) FROM orders WHERE promo_code_id = ?');
+                $usedStmt->execute([$promo['id']]);
+                $usageOk = (int) $usedStmt->fetchColumn() < (int) $promo['usage_limit'];
+            }
+
+            if (!$usageOk) {
+                $errors[] = 'That promo code has reached its usage limit.';
+            } else {
+                $appliedPromoId = (int) $promo['id'];
+                $discountAmount = $promo['discount_type'] === 'percentage'
+                    ? $subtotal * ((float) $promo['discount_value'] / 100)
+                    : (float) $promo['discount_value'];
+                $discountAmount = min($discountAmount, $subtotal);
+            }
+        }
+    }
+
     if (empty($errors)) {
         $subtotal = 0;
         foreach ($cartItems as $item) {
             $subtotal += $item['quantity'] * $item['price'];
         }
         $deliveryFee = $orderType === 'delivery' ? DELIVERY_FEE : 0;
-        $totalAmount = $subtotal + $deliveryFee;
+        $totalAmount = $subtotal - $discountAmount + $deliveryFee;
 
         try {
             $pdo->beginTransaction();
 
             $stmt = $pdo->prepare(
-                'INSERT INTO orders (user_id, total_amount, order_status, payment_status, order_type, delivery_address, delivery_fee)
-                 VALUES (?, ?, "pending", "unpaid", ?, ?, ?)'
+                'INSERT INTO orders (user_id, total_amount, order_status, payment_status, order_type, delivery_address, delivery_fee, promo_code_id, discount_amount)
+                 VALUES (?, ?, "pending", "unpaid", ?, ?, ?, ?, ?)'
             );
             $stmt->execute([
                 $userId,
@@ -77,6 +119,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $orderType,
                 $orderType === 'delivery' ? $deliveryAddress : null,
                 $deliveryFee,
+                $appliedPromoId,
+                $discountAmount,
             ]);
             $orderId = (int) $pdo->lastInsertId();
 
@@ -180,6 +224,17 @@ require_once __DIR__ . '/../includes/navbar.php';
                     </div>
                 </div>
 
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><i class="bi bi-ticket-perforated me-2"></i>Promo Code</h5>
+                        <div class="input-group">
+                            <input type="text" name="promo_code" id="promoCodeInput" class="form-control text-uppercase" placeholder="Enter promo code">
+                            <button type="button" id="promoApplyBtn" class="btn btn-outline-secondary">Apply</button>
+                        </div>
+                        <div id="promoMessage" class="form-text"></div>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn btn-coffee btn-lg w-100">Place Order</button>
             </form>
         </div>
@@ -199,6 +254,10 @@ require_once __DIR__ . '/../includes/navbar.php';
                             <tr>
                                 <td>Subtotal</td>
                                 <td class="text-end"><?= CURRENCY_SYMBOL ?> <?= number_format($subtotal, 2) ?></td>
+                            </tr>
+                            <tr id="discountRow" style="display:none;">
+                                <td>Discount</td>
+                                <td class="text-end">-<?= CURRENCY_SYMBOL ?> <span id="discountAmountDisplay">0.00</span></td>
                             </tr>
                             <tr id="deliveryFeeRow" style="display:none;">
                                 <td>Delivery Fee</td>

@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-coffee-cream shadow-sm sticky-top">
     <div class="container">
         <a class="navbar-brand" href="<?= BASE_URL ?>public/index.php">
-            <img src="<?= BASE_URL ?>assets/images/logo.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" height="48">
+            <img src="<?= BASE_URL ?>assets/images/logov3.png" alt="<?= htmlspecialchars(SITE_NAME) ?>" height="48">
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
