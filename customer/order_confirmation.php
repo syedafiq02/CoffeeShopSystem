@@ -30,6 +30,8 @@ $itemsStmt = $pdo->prepare(
 $itemsStmt->execute([$orderId]);
 $items = $itemsStmt->fetchAll();
 
+$paymentStatusColors = ['unpaid' => 'secondary', 'paid' => 'success', 'failed' => 'danger', 'cancelled' => 'secondary'];
+
 $pageTitle = 'Order Confirmation';
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/navbar.php';
@@ -51,7 +53,7 @@ require_once __DIR__ . '/../includes/navbar.php';
                     </div>
                     <div class="d-flex justify-content-between mb-3">
                         <span>Payment Status</span>
-                        <span class="badge bg-info text-dark"><?= htmlspecialchars(ucfirst($order['payment_status'])) ?></span>
+                        <span class="badge bg-<?= $paymentStatusColors[$order['payment_status']] ?? 'secondary' ?>"><?= htmlspecialchars(ucfirst($order['payment_status'])) ?></span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
                         <span>Order Type</span>

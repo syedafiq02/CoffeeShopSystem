@@ -740,3 +740,53 @@ body.has-hero .navbar.scrolled .nav-link:hover {
         background: #fff !important;
     }
 }
+
+/* =====================================================
+   Mock payment gateway (payment_fpx.php, payment_card.php)
+   Entirely simulated — see the DEMO PAYMENT notices on
+   every screen. Bank/method selection reuses .option-check,
+   icon badges reuse .stat-card-icon; nothing new needed there.
+   ===================================================== */
+
+.demo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background-color: var(--gold);
+    color: var(--espresso);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 0.9rem;
+    border-radius: var(--radius-pill);
+}
+
+.demo-notice {
+    background-color: var(--cream);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-warm);
+}
+
+.payment-result-icon {
+    font-size: 4rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.card-number-input {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.08em;
+    font-size: 1.1rem;
+}
+
+.gateway-header {
+    text-align: center;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--beige);
+}

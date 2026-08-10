@@ -15,6 +15,16 @@ function sanitize_input(string $value): string
 }
 
 /**
+ * Generate a clearly-labeled demo transaction reference, e.g. DEMO-FPX-20260810-A1B2C3.
+ * Used only by the mock payment gateway (customer/payment_fpx.php, payment_card.php)
+ * — never a real transaction identifier from any real processor.
+ */
+function generate_demo_transaction_ref(string $prefix): string
+{
+    return 'DEMO-' . strtoupper($prefix) . '-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
+}
+
+/**
  * Basic phone number sanity check: digits, spaces, +, -, () only, 7-20 chars.
  */
 function is_valid_phone(string $phone): bool

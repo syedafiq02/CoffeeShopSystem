@@ -99,7 +99,7 @@ CREATE TABLE orders (
     total_amount DECIMAL(10,2) NOT NULL,
     order_status ENUM('pending', 'preparing', 'ready', 'completed', 'cancelled')
         NOT NULL DEFAULT 'pending',
-    payment_status ENUM('unpaid', 'paid', 'failed') NOT NULL DEFAULT 'unpaid',
+    payment_status ENUM('unpaid', 'paid', 'failed', 'cancelled') NOT NULL DEFAULT 'unpaid',
     order_type ENUM('pickup', 'delivery') NOT NULL DEFAULT 'pickup',
     delivery_address TEXT DEFAULT NULL,
     delivery_fee DECIMAL(10,2) NOT NULL DEFAULT 0.00,
@@ -135,7 +135,7 @@ CREATE TABLE payments (
     order_id INT NOT NULL,
     method ENUM('cash', 'online_banking', 'card') NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
-    status ENUM('pending', 'success', 'failed') NOT NULL DEFAULT 'pending',
+    status ENUM('pending', 'success', 'failed', 'cancelled') NOT NULL DEFAULT 'pending',
     transaction_ref VARCHAR(64) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id)

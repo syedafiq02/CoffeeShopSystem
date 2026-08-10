@@ -16,7 +16,7 @@ A full-stack coffee shop management system built with **native PHP**, **MySQL**,
 
 **Customer accounts** — Registration/login with `password_hash()`/`password_verify()`, profile management, password change, order history, AJAX-powered cart.
 
-**Checkout** — Pickup or delivery, cash/online banking/card payment via a simulated gateway (with retry-on-failure), promo code discounts.
+**Checkout** — Pickup or delivery, cash payment, or realistic mock payment gateways for Online Banking (FPX-style) and Card, each with demo bank/card selection, demo OTP verification, a processing animation, and a distinct success/failed/cancelled result screen (with retry-on-failure), plus promo code discounts.
 
 **Admin panel** — Product/category/gallery CRUD with validated image uploads, order management with status tracking, customer role management, dashboard with real sales stats, promo code management, and printable Daily/Weekly/Monthly sales reports plus per-order receipts.
 
@@ -64,7 +64,7 @@ This project was built in two tracks: the core system, then a full UI/UX redesig
 | 2 | Public Website | Home, About, Menu, Gallery, Location, Contact |
 | 3 | Customer Dashboard | Profile view/update, change password, order history |
 | 4 | Menu + Cart | AJAX add/update/remove cart, live navbar cart badge |
-| 5 | Checkout + Payment Gateway | Pickup/delivery, cash/online/card, simulated gateway with retry logic |
+| 5 | Checkout + Payment Gateway | Pickup/delivery, cash/online/card, simulated gateway with retry logic (later replaced — see Post-Launch Additions) |
 | 6 | Admin: Products/Categories/Gallery | Full CRUD, image upload validated via `getimagesize()` |
 | 7 | Admin: Order Management | Order list/filter, detail view, payment history, status updates |
 | 8 | Admin: Customer Management | Role toggle with self-demotion + last-admin guards |
@@ -93,5 +93,6 @@ This project was built in two tracks: the core system, then a full UI/UX redesig
 | GMT+8 timezone | Centralized in `config/constants.php` (PHP) and `config/db.php` (MySQL session) |
 | Promo code system | Admin-managed discount codes (percentage/fixed, usage limit, expiry), live checkout preview, server-authoritative validation |
 | Rebrand | Nōva Brew branding and logo |
+| Mock payment gateways | Replaced the old "Simulate Success/Failure" buttons with realistic FPX-style and Card mock flows (`customer/payment_fpx.php`, `customer/payment_card.php`) — bank/card selection, demo login/OTP (`123456`=success, `000000`=failure), processing animation, and a distinct Successful/Failed/Cancelled result screen with a demo transaction reference. 100% simulated: no real gateway, processor, or bank is ever contacted, and no real card/banking data is collected or stored. Built on the Post-Redirect-Get pattern so refreshing or hitting back can never accidentally mark an order as paid. |
 
 **18/18 planned phases complete across both tracks, plus post-launch feature additions** — every phase verified against real HTTP requests, real database writes, and real file uploads where relevant.
